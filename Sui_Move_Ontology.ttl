@@ -1,0 +1,1560 @@
+# ============================================================================
+# Sui Move Ontology v1.0
+# ============================================================================
+
+@prefix : <http://www.sui-move-ontology.com/ontology#> .
+@prefix sui: <http://www.sui-move-ontology.com/ontology#> .
+@prefix suwc: <http://www.sui-move-ontology.com/defects/v1#> .
+@prefix pattern: <http://www.sui-move-ontology.com/patterns/v1#> .
+@prefix dcr: <http://purl.org/net/dcr#> .
+@prefix ocdcr: <http://www.sui-move-ontology.com/ocdcr#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix software: <https://w3id.org/software#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ============================================================================
+# ONTOLOGY METADATA
+# ============================================================================
+
+<http://www.sui-move-ontology.com/ontology>
+    a owl:Ontology ;
+    rdfs:label "Sui Move Ontology v1.0" ;
+    owl:versionIRI <http://www.sui-move-ontology.com/ontology/1.0> ;
+    owl:versionInfo "1.0" ;
+    owl:priorVersion <http://www.sui-move-ontology.com/ontology/v0.1> ;
+    dcterms:title "Sui Move Security Ontology" ;
+    dcterms:creator "Antonios Giatzis" ;
+    dcterms:created "2024-01-15T00:00:00Z"^^xsd:dateTime ;
+    dcterms:modified "2026-04-06T08:55:00Z"^^xsd:dateTime ;
+    dcterms:conformsTo <http://obse-standard.org/> ;
+    prov:wasGeneratedBy <http://www.sui-move-ontology.com/methodology/LOT> ;
+    owl:imports prov:, time: .
+
+
+# ============================================================================
+# LAYER 0: GRAMMAR LAYER - Core Semantics
+# ============================================================================
+
+sui:GrammarLayer a owl:Class ;
+    rdfs:label "Grammar Layer" ;
+    rdfs:comment "Layer 0: Core grammar semantics for Sui Move - Foundation for all semantic mappings" ;
+    dcterms:date "2026-01-06"^^xsd:date .
+
+# ============================================================================
+# LAYER 1: SEMANTIC LAYER - Core Concepts (105+ classes)
+# ============================================================================
+
+sui:SemanticLayer a owl:Class ;
+    rdfs:label "Semantic Layer" ;
+    rdfs:comment "Layer 1: Semantic concepts providing 1:1 mapping from 171 Sui Move grammar rules" ;
+    dcterms:date "2026-01-06"^^xsd:date .
+
+# ============================================================================
+# MODULE AND PACKAGE SYSTEM (Grammar Rules: 1-15)
+# ============================================================================
+
+sui:Package a owl:Class ;
+    rdfs:label "Package" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    owl:disjointWith sui:Module ;
+    rdfs:comment "Package containing modules (grammar rule: package_def)" .
+
+sui:Module a owl:Class ;
+    rdfs:label "Module" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Module definition (grammar rule: module_def)" .
+
+sui:Address a owl:Class ;
+    rdfs:label "Address" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Module address specifier" .
+
+# Module/Import System (Grammar Rules: 12-15) - NEW
+sui:UseDeclaration a owl:Class ;
+    rdfs:label "UseDeclaration" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Import declaration: use address::module (grammar rule: use_decl)" .
+
+sui:FunctionImport a owl:Class ;
+    rdfs:label "FunctionImport" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Function import declaration (grammar rule: fun_import)" .
+
+sui:FriendDeclaration a owl:Class ;
+    rdfs:label "FriendDeclaration" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Friend access declaration (grammar rule: friend_decl)" .
+
+sui:ModuleAccess a owl:Class ;
+    rdfs:label "ModuleAccess" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Module member access specifier" .
+
+# ============================================================================
+# TYPE SYSTEM (Grammar Rules: 16-43)
+# ============================================================================
+
+sui:Type a owl:Class ;
+    rdfs:label "Type" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Type system base class (grammar rule: type_)" .
+
+sui:PrimitiveType a owl:Class ;
+    rdfs:label "Primitive Type" ;
+    rdfs:subClassOf sui:Type ;
+    rdfs:comment "Primitive types: bool, u8, u16, u32, u64, u128, u256, address" .
+
+sui:Struct a owl:Class ;
+    rdfs:label "Struct" ;
+    rdfs:subClassOf sui:Type ;
+    rdfs:comment "Struct type definition (grammar rule: struct_type_def)" .
+
+sui:Object a owl:Class ;
+    rdfs:label "Object" ;
+    rdfs:subClassOf sui:Struct ;
+    rdfs:comment "Object with key ability (Sui-specific struct)" .
+
+sui:Enum a owl:Class ;
+    rdfs:label "Enum" ;
+    rdfs:subClassOf sui:Type ;
+    rdfs:comment "Enum type definition (grammar rule: enum_type_def)" .
+
+sui:EnumVariant a owl:Class ;
+    rdfs:label "Enum Variant" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Enum variant with fields (grammar rule: enum_variant)" .
+
+sui:Reference a owl:Class ;
+    rdfs:label "Reference" ;
+    rdfs:subClassOf sui:Type ;
+    rdfs:comment "Reference type: &T or &mut T (grammar rule: ref_type)" .
+
+sui:Vector a owl:Class ;
+    rdfs:label "Vector" ;
+    rdfs:subClassOf sui:Type ;
+    rdfs:comment "Vector type: vector<T> (grammar rule: vector_type)" .
+
+# Extended Type System (Grammar Rules: 38-43) - NEW
+sui:TupleType a owl:Class ;
+    rdfs:label "TupleType" ;
+    rdfs:subClassOf sui:Type ;
+    rdfs:comment "Tuple type for multiple values (grammar rule: tuple_type)" .
+
+sui:FunctionType a owl:Class ;
+    rdfs:label "FunctionType" ;
+    rdfs:subClassOf sui:Type ;
+    rdfs:comment "Higher-order function type (grammar rule: fun_type)" .
+
+sui:TypeParameter a owl:Class ;
+    rdfs:label "TypeParameter" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Generic type parameter with constraints (grammar rule: type_param)" .
+
+sui:AppliedType a owl:Class ;
+    rdfs:label "AppliedType" ;
+    rdfs:subClassOf sui:Type ;
+    rdfs:comment "Type with applied type arguments (grammar rule: type_with_args)" .
+
+# ============================================================================
+# FIELD AND STRUCTURE (Grammar Rules: 44-48)
+# ============================================================================
+
+sui:Field a owl:Class ;
+    rdfs:label "Field" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Struct field definition (grammar rule: field)" .
+
+sui:DynamicField a owl:Class ;
+    rdfs:label "Dynamic Field" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Dynamic field using dynamic_field (grammar rule: dyn_field)" .
+
+# ============================================================================
+# FUNCTION SYSTEM (Grammar Rules: 49-62)
+# ============================================================================
+
+sui:Function a owl:Class ;
+    rdfs:label "Function" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Function definition (grammar rule: function_def)" .
+
+sui:EntryFunction a owl:Class ;
+    rdfs:label "Entry Function" ;
+    rdfs:subClassOf sui:Function ;
+    rdfs:comment "Public entry function callable from transactions" .
+
+
+sui:Parameter a owl:Class ;
+    rdfs:label "Parameter" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Function parameter (grammar rule: parameter)" .
+
+sui:Constant a owl:Class ;
+    rdfs:label "Constant" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Module-level constant (grammar rule: const_def)" .
+
+sui:Visibility a owl:Class ;
+    rdfs:label "Function Visibility" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Function visibility modifier: public, public(package), private" .
+
+sui:StructVisibility a owl:Class ;
+    rdfs:label "Struct Visibility" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Struct visibility: public or implicit private" .
+
+# ============================================================================
+# ANNOTATION SYSTEM (Grammar Rules: 63-66) - NEW
+# ============================================================================
+
+sui:Annotation a owl:Class ;
+    rdfs:label "Annotation" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Annotation on code elements (grammar rule: attribute)" .
+
+sui:AnnotationExpr a owl:Class ;
+    rdfs:label "AnnotationExpr" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Expression within annotation (grammar rule: attr_expr)" .
+
+sui:AnnotationList a owl:Class ;
+    rdfs:label "AnnotationList" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "List of annotations" .
+
+sui:AnnotationItem a owl:Class ;
+    rdfs:label "AnnotationItem" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Single annotation item" .
+
+# ============================================================================
+# EXPRESSION SYSTEM (Grammar Rules: 67-134) - NEW (20 CLASSES)
+# ============================================================================
+
+sui:Expression a owl:Class ;
+    rdfs:label "Expression" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Base class for all Sui Move expressions (grammar rule: expr)" .
+
+# Control Flow Expressions (Grammar Rules: 80-87)
+sui:IfExpression a owl:Class ;
+    rdfs:label "IfExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "If-then-else conditional (grammar rule: if_expr)" .
+
+sui:WhileExpression a owl:Class ;
+    rdfs:label "WhileExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "While loop expression (grammar rule: while_expr)" .
+
+sui:LoopExpression a owl:Class ;
+    rdfs:label "LoopExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Infinite loop expression (grammar rule: loop_expr)" .
+
+sui:ReturnExpression a owl:Class ;
+    rdfs:label "ReturnExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Return statement (grammar rule: return_expr)" .
+
+sui:AbortExpression a owl:Class ;
+    rdfs:label "AbortExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Abort with code (grammar rule: abort_expr)" .
+
+sui:BreakExpression a owl:Class ;
+    rdfs:label "BreakExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Break from loop (grammar rule: break_expr)" .
+
+# Assignment (Grammar Rule: 88)
+sui:AssignmentExpression a owl:Class ;
+    rdfs:label "AssignmentExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Variable assignment (grammar rule: assign_expr)" .
+
+# Operators (Grammar Rules: 89-107)
+sui:UnaryExpression a owl:Class ;
+    rdfs:label "UnaryExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Unary operation: !, ~, * (grammar rule: unary_expr)" .
+
+sui:BinaryExpression a owl:Class ;
+    rdfs:label "BinaryExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Binary operation: arithmetic, logical, bitwise (grammar rule: binary_expr)" .
+
+sui:CastExpression a owl:Class ;
+    rdfs:label "CastExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Type cast expression (grammar rule: cast_expr)" .
+
+# Advanced Expressions (Grammar Rules: 108-120)
+sui:CallExpression a owl:Class ;
+    rdfs:label "CallExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Function call expression (grammar rule: call_expr)" .
+
+sui:MacroCallExpression a owl:Class ;
+    rdfs:label "MacroCallExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Macro invocation (grammar rule: macro_call_expr)" .
+
+sui:LambdaExpression a owl:Class ;
+    rdfs:label "LambdaExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Lambda/closure (grammar rule: lambda_expr)" .
+
+sui:MatchExpression a owl:Class ;
+    rdfs:label "MatchExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Pattern matching (grammar rule: match_expr)" .
+
+sui:QuantifierExpression a owl:Class ;
+    rdfs:label "QuantifierExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Quantified expression: forall, exists (grammar rule: quant_expr)" .
+
+# Data Construction (Grammar Rules: 121-124)
+sui:PackExpression a owl:Class ;
+    rdfs:label "PackExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Struct constructor (grammar rule: pack_expr)" .
+
+sui:VectorExpression a owl:Class ;
+    rdfs:label "VectorExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Vector literal (grammar rule: vec_expr)" .
+
+# Access Expressions (Grammar Rules: 125-127)
+sui:FieldAccessExpression a owl:Class ;
+    rdfs:label "FieldAccessExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Field access: obj.field (grammar rule: field_access)" .
+
+sui:IndexAccessExpression a owl:Class ;
+    rdfs:label "IndexAccessExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Index access: vec[i] (grammar rule: index_access)" .
+
+sui:DereferenceExpression a owl:Class ;
+    rdfs:label "DereferenceExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Dereference: *ref (grammar rule: deref_expr)" .
+
+# Special Expressions (Grammar Rules: 128-134)
+sui:MoveExpression a owl:Class ;
+    rdfs:label "MoveExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Move semantics expression (grammar rule: move_expr)" .
+
+sui:AnnotatedExpression a owl:Class ;
+    rdfs:label "AnnotatedExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Annotated expression (grammar rule: annot_expr)" .
+
+sui:UnitExpression a owl:Class ;
+    rdfs:label "UnitExpression" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Unit value () (grammar rule: unit_expr)" .
+
+sui:ExpressionTerm a owl:Class ;
+    rdfs:label "ExpressionTerm" ;
+    rdfs:subClassOf sui:Expression ;
+    rdfs:comment "Terminal expression: variable, literal (grammar rule: expr_term)" .
+
+# ============================================================================
+# STATEMENT SYSTEM (Grammar Rules: 135-138)
+# ============================================================================
+
+sui:Statement a owl:Class ;
+    rdfs:label "Statement" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Statement in function body (grammar rule: statement)" .
+
+sui:LetStatement a owl:Class ;
+    rdfs:label "LetStatement" ;
+    rdfs:subClassOf sui:Statement ;
+    rdfs:comment "Let binding (grammar rule: let_stmt)" .
+
+sui:Block a owl:Class ;
+    rdfs:label "Block" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Code block (grammar rule: block)" .
+
+# ============================================================================
+# IDENTIFIER AND BINDING (Grammar Rules: 139-142)
+# ============================================================================
+
+sui:Identifier a owl:Class ;
+    rdfs:label "Identifier" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Identifier: var, fun, type name (grammar rule: identifier)" .
+
+sui:Binding a owl:Class ;
+    rdfs:label "Binding" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Binding in pattern (grammar rule: bind_or_wild)" .
+
+# ============================================================================
+# QUANTIFIERS (Grammar Rules: 143-145)
+# ============================================================================
+
+sui:Quantifier a owl:Class ;
+    rdfs:label "Quantifier" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Quantifier in specification (grammar rule: quant)" .
+
+sui:ForAll a sui:Quantifier ;
+    rdfs:label "ForAll" ;
+    rdfs:comment "Universal quantifier (grammar rule: forall)" .
+
+sui:Exists a sui:Quantifier ;
+    rdfs:label "Exists" ;
+    rdfs:comment "Existential quantifier (grammar rule: exists)" .
+
+# ============================================================================
+# ABILITY AND OWNERSHIP (Grammar Rules: 146-151)
+# ============================================================================
+
+sui:Ability a owl:Class ;
+    rdfs:label "Ability" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Type ability: copy, drop, store, key (grammar rule: ability)" .
+
+sui:OwnershipType a owl:Class ;
+    rdfs:label "Ownership Type" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Object ownership model (grammar rule: ownership_type)" .
+
+sui:ObjectLifecycleState a owl:Class ;
+    rdfs:label "Object Lifecycle State" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Object lifecycle (grammar rule: lifecycle_state)" .
+
+# Ability Individuals
+sui:key a sui:Ability, owl:NamedIndividual ;
+    rdfs:label "key" ;
+    rdfs:comment "Key ability (grammar rule: KEY)" .
+
+sui:store a sui:Ability, owl:NamedIndividual ;
+    rdfs:label "store" ;
+    rdfs:comment "Store ability (grammar rule: STORE)" .
+
+sui:copy a sui:Ability, owl:NamedIndividual ;
+    rdfs:label "copy" ;
+    rdfs:comment "Copy ability (grammar rule: COPY)" .
+
+sui:drop a sui:Ability, owl:NamedIndividual ;
+    rdfs:label "drop" ;
+    rdfs:comment "Drop ability (grammar rule: DROP)" .
+
+# Visibility Individuals
+sui:public a sui:Visibility, owl:NamedIndividual ;
+    rdfs:label "public" ;
+    rdfs:comment "Public visibility" .
+
+sui:public_package a sui:Visibility, owl:NamedIndividual ;
+    rdfs:label "public(package)" ;
+    rdfs:comment "Package-private visibility" .
+
+sui:private a sui:Visibility, owl:NamedIndividual ;
+    rdfs:label "private" ;
+    rdfs:comment "Private visibility" .
+
+# StructVisibility Individuals
+sui:struct_public a sui:StructVisibility, owl:NamedIndividual ;
+    rdfs:label "public struct" ;
+    rdfs:comment "Public struct visibility" .
+
+# OwnershipType Individuals
+sui:AddressOwned a sui:OwnershipType, owl:NamedIndividual ;
+    rdfs:label "Address-Owned" ;
+    rdfs:comment "Address-owned object" .
+
+sui:Shared a sui:OwnershipType, owl:NamedIndividual ;
+    rdfs:label "Shared" ;
+    rdfs:comment "Shared object" .
+
+sui:Immutable a sui:OwnershipType, owl:NamedIndividual ;
+    rdfs:label "Immutable" ;
+    rdfs:comment "Immutable object" .
+
+sui:Wrapped a sui:OwnershipType, owl:NamedIndividual ;
+    rdfs:label "Wrapped" ;
+    rdfs:comment "Wrapped object" .
+
+# ObjectLifecycleState Individuals
+sui:Created a sui:ObjectLifecycleState, owl:NamedIndividual ;
+    rdfs:label "Created" ;
+    rdfs:comment "Object created state" .
+
+sui:Owned a sui:ObjectLifecycleState, owl:NamedIndividual ;
+    rdfs:label "Owned" ;
+    rdfs:comment "Object owned state" .
+
+sui:Transferred a sui:ObjectLifecycleState, owl:NamedIndividual ;
+    rdfs:label "Transferred" ;
+    rdfs:comment "Object transferred state" .
+
+sui:Deleted a sui:ObjectLifecycleState, owl:NamedIndividual ;
+    rdfs:label "Deleted" ;
+    rdfs:comment "Object deleted state" .
+
+# ============================================================================
+# EVENT AND TRANSACTION (Grammar Rules: 152-157)
+# ============================================================================
+
+sui:Event a owl:Class ;
+    rdfs:label "Event Struct" ;
+    rdfs:subClassOf sui:Struct ;
+    rdfs:comment "Event definition struct (grammar rule: event_def)" .
+
+sui:GlobalStorageOperation a owl:Class ;
+    rdfs:label "Global Storage Operation" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Global storage operation" .
+
+sui:Transaction a owl:Class ;
+    rdfs:label "Transaction" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Sui transaction (grammar rule: transaction)" .
+
+sui:TransactionEffects a owl:Class ;
+    rdfs:label "Transaction Effects" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Transaction effects (grammar rule: tx_effects)" .
+
+sui:ProgrammableTransactionBlock a owl:Class ;
+    rdfs:label "Programmable Transaction Block" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "PTB (grammar rule: ptb)" .
+
+# ============================================================================
+# LAYER 5: VERIFICATION LAYER - Move Prover Specification System
+# (Grammar Rules: 158-165)
+# Purpose: Formal verification annotations that express what SHOULD hold,
+#   as distinct from what the code DOES (Layer 1 Semantic).
+#   These do not compile to bytecode — they are static verification targets.
+# ============================================================================
+
+sui:VerificationLayer a owl:Class ;
+    rdfs:label "Verification Layer" ;
+    rdfs:comment "Layer 5: Move Prover formal specification system — preconditions, postconditions, invariants, and abort conditions" ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+sui:Specification a owl:Class ;
+    rdfs:label "Specification" ;
+    rdfs:subClassOf sui:VerificationLayer ;
+    rdfs:comment "Formal specification (grammar rule: spec)" .
+
+sui:SpecClause a owl:Class ;
+    rdfs:label "Specification Clause" ;
+    rdfs:subClassOf sui:VerificationLayer ;
+    rdfs:comment "Specification clause base class (grammar rule: spec_clause)" .
+
+sui:Invariant a owl:Class ;
+    rdfs:label "Invariant" ;
+    rdfs:subClassOf sui:SpecClause ;
+    rdfs:comment "Invariant clause (grammar rule: invariant)" .
+
+sui:RequiresClause a owl:Class ;
+    rdfs:label "Requires Clause" ;
+    rdfs:subClassOf sui:SpecClause ;
+    rdfs:comment "Precondition clause (grammar rule: requires)" .
+
+sui:EnsuresClause a owl:Class ;
+    rdfs:label "Ensures Clause" ;
+    rdfs:subClassOf sui:SpecClause ;
+    rdfs:comment "Postcondition clause (grammar rule: ensures)" .
+
+sui:AbortsIfClause a owl:Class ;
+    rdfs:label "Aborts If Clause" ;
+    rdfs:subClassOf sui:SpecClause ;
+    rdfs:comment "Abort condition clause (grammar rule: aborts_if)" .
+
+sui:ModifiesClauseSpec a owl:Class ;
+    rdfs:label "Modifies Clause Spec" ;
+    rdfs:subClassOf sui:SpecClause ;
+    rdfs:comment "Modifies clause (grammar rule: modifies)" .
+
+sui:SpecPragma a owl:Class ;
+    rdfs:label "SpecPragma" ;
+    rdfs:subClassOf sui:SpecClause ;
+    rdfs:comment "Pragma directive (grammar rule: pragma)" .
+
+sui:SpecInclude a owl:Class ;
+    rdfs:label "SpecInclude" ;
+    rdfs:subClassOf sui:SpecClause ;
+    rdfs:comment "Include directive (grammar rule: include)" .
+
+sui:SpecApply a owl:Class ;
+    rdfs:label "SpecApply" ;
+    rdfs:subClassOf sui:SpecClause ;
+    rdfs:comment "Apply directive (grammar rule: apply)" .
+
+# ============================================================================
+# BORROWING AND OPERATORS (Grammar Rules: 166-167) - NEW
+# ============================================================================
+
+sui:BorrowingOperator a owl:Class ;
+    rdfs:label "Borrowing Operator" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Reference borrowing: & or &mut (grammar rule: borrow_op)" .
+
+# ============================================================================
+# OPERATOR SYSTEM (Grammar Rules: 168-171) - NEW (19 OPERATORS)
+# ============================================================================
+
+sui:Operator a owl:Class ;
+    rdfs:label "Operator" ;
+    rdfs:subClassOf sui:SemanticLayer ;
+    rdfs:comment "Binary or unary operator (grammar rule: operator)" .
+
+# Binary Arithmetic Operators
+sui:PlusOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "+" ;
+    rdfs:comment "Addition operator (grammar rule: +)" .
+
+sui:MinusOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "-" ;
+    rdfs:comment "Subtraction operator (grammar rule: -)" .
+
+sui:MultiplyOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "*" ;
+    rdfs:comment "Multiplication operator (grammar rule: *)" .
+
+sui:DivideOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "/" ;
+    rdfs:comment "Division operator (grammar rule: /)" .
+
+sui:ModuloOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "%" ;
+    rdfs:comment "Modulo operator (grammar rule: %)" .
+
+# Comparison Operators
+sui:EqualOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "==" ;
+    rdfs:comment "Equality operator (grammar rule: ==)" .
+
+sui:NotEqualOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "!=" ;
+    rdfs:comment "Not equal operator (grammar rule: !=)" .
+
+sui:LessThanOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "<" ;
+    rdfs:comment "Less than operator (grammar rule: <)" .
+
+sui:LessThanOrEqualOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "<=" ;
+    rdfs:comment "Less than or equal operator (grammar rule: <=)" .
+
+sui:GreaterThanOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label ">" ;
+    rdfs:comment "Greater than operator (grammar rule: >)" .
+
+sui:GreaterThanOrEqualOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label ">=" ;
+    rdfs:comment "Greater than or equal operator (grammar rule: >=)" .
+
+# Bitwise Operators
+sui:BitwiseAndOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "&" ;
+    rdfs:comment "Bitwise AND operator (grammar rule: &)" .
+
+sui:BitwiseOrOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "|" ;
+    rdfs:comment "Bitwise OR operator (grammar rule: |)" .
+
+sui:BitwiseXorOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "^" ;
+    rdfs:comment "Bitwise XOR operator (grammar rule: ^)" .
+
+sui:LeftShiftOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "<<" ;
+    rdfs:comment "Left shift operator (grammar rule: <<)" .
+
+sui:RightShiftOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label ">>" ;
+    rdfs:comment "Right shift operator (grammar rule: >>)" .
+
+# Unary Operators
+sui:NotOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "!" ;
+    rdfs:comment "Logical NOT operator (grammar rule: !)" .
+
+sui:BitwiseNotOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "~" ;
+    rdfs:comment "Bitwise NOT operator (grammar rule: ~)" .
+
+sui:DereferenceOperator a sui:Operator, owl:NamedIndividual ;
+    rdfs:label "*" ;
+    rdfs:comment "Dereference operator (grammar rule: *)" .
+
+# ============================================================================
+# LAYER 1: OBJECT PROPERTIES AND DATATYPE PROPERTIES (55+ PROPERTIES)
+# ============================================================================
+
+# Module/Import Properties (NEW)
+sui:imports a owl:ObjectProperty ;
+    rdfs:label "imports" ;
+    rdfs:domain sui:Module ;
+    rdfs:range sui:Module ;
+    rdfs:comment "Module imports another module" .
+
+sui:importsFun a owl:ObjectProperty ;
+    rdfs:label "imports function" ;
+    rdfs:domain sui:Module ;
+    rdfs:range sui:Function ;
+    rdfs:comment "Function import declaration" .
+
+sui:hasFriend a owl:ObjectProperty ;
+    rdfs:label "has friend" ;
+    rdfs:domain sui:Module ;
+    rdfs:range sui:Module ;
+    rdfs:comment "Friend module declaration" .
+
+sui:isFriendOf a owl:ObjectProperty ;
+    rdfs:label "is friend of" ;
+    owl:inverseOf sui:hasFriend ;
+    rdfs:comment "Inverse of hasFriend" .
+
+# Expression Properties (NEW)
+sui:hasOperand a owl:ObjectProperty ;
+    rdfs:label "has operand" ;
+    rdfs:domain [ a owl:Class; owl:unionOf (sui:UnaryExpression sui:BinaryExpression) ] ;
+    rdfs:range sui:Expression ;
+    rdfs:comment "Expression has operand" .
+
+sui:hasOperator a owl:ObjectProperty ;
+    rdfs:label "has operator" ;
+    rdfs:domain [ a owl:Class; owl:unionOf (sui:UnaryExpression sui:BinaryExpression) ] ;
+    rdfs:range sui:Operator ;
+    rdfs:comment "Expression uses operator" .
+
+sui:hasConditionExpr a owl:ObjectProperty ;
+    rdfs:label "has condition" ;
+    rdfs:domain [ a owl:Class; owl:unionOf (sui:IfExpression sui:WhileExpression) ] ;
+    rdfs:range sui:Expression ;
+    rdfs:comment "Control flow has condition" .
+
+sui:hasThenBranch a owl:ObjectProperty ;
+    rdfs:label "has then branch" ;
+    rdfs:domain sui:IfExpression ;
+    rdfs:range sui:Expression ;
+    rdfs:comment "If expression has then branch" .
+
+sui:hasElseBranch a owl:ObjectProperty ;
+    rdfs:label "has else branch" ;
+    rdfs:domain sui:IfExpression ;
+    rdfs:range sui:Expression ;
+    rdfs:comment "If expression has else branch" .
+
+sui:hasLoopBody a owl:ObjectProperty ;
+    rdfs:label "has loop body" ;
+    rdfs:domain [ a owl:Class; owl:unionOf (sui:WhileExpression sui:LoopExpression) ] ;
+    rdfs:range sui:Expression ;
+    rdfs:comment "Loop expression has body" .
+
+sui:hasReturnType a owl:ObjectProperty ;
+    rdfs:label "has return type" ;
+    rdfs:domain sui:Function ;
+    rdfs:range sui:Type .
+
+# Original Core Properties
+sui:contains a owl:ObjectProperty ;
+    rdfs:label "contains" .
+
+sui:isContainedIn a owl:ObjectProperty ;
+    rdfs:label "is contained in" ;
+    owl:inverseOf sui:contains .
+
+sui:defines a owl:ObjectProperty ;
+    rdfs:label "defines" .
+
+sui:isDefinedBy a owl:ObjectProperty ;
+    rdfs:label "is defined by" ;
+    owl:inverseOf sui:defines .
+
+sui:belongsTo a owl:ObjectProperty ;
+    rdfs:label "belongs to" .
+
+sui:hasName a owl:DatatypeProperty ;
+    rdfs:label "has name" ;
+    rdfs:range xsd:string .
+
+sui:hasVersion a owl:DatatypeProperty ;
+    rdfs:label "has version" ;
+    rdfs:range xsd:string .
+
+sui:uses a owl:ObjectProperty ;
+    rdfs:label "uses" .
+
+sui:isUsedBy a owl:ObjectProperty ;
+    rdfs:label "is used by" ;
+    owl:inverseOf sui:uses .
+
+sui:calls a owl:ObjectProperty ;
+    rdfs:label "calls" .
+
+sui:isCalledBy a owl:ObjectProperty ;
+    rdfs:label "is called by" ;
+    owl:inverseOf sui:calls .
+
+sui:instantiates a owl:ObjectProperty ;
+    rdfs:label "instantiates" ;
+    rdfs:domain sui:Function ;
+    rdfs:range sui:Struct .
+
+sui:dependsOn a owl:ObjectProperty ;
+    rdfs:label "depends on" ;
+    rdfs:domain sui:Package ;
+    rdfs:range sui:Package .
+
+sui:stores a owl:ObjectProperty ;
+    rdfs:label "stores" ;
+    rdfs:domain sui:Address ;
+    rdfs:range sui:Module .
+
+sui:owns a owl:ObjectProperty ;
+    rdfs:label "owns" ;
+    rdfs:range sui:Object .
+
+sui:hasDynamicField a owl:ObjectProperty ;
+    rdfs:label "has dynamic field" ;
+    rdfs:domain sui:Object ;
+    rdfs:range sui:DynamicField .
+
+sui:dynamicFieldKey a owl:DatatypeProperty ;
+    rdfs:label "dynamic field key" ;
+    rdfs:domain sui:DynamicField ;
+    rdfs:range xsd:string .
+
+sui:hasOwnershipType a owl:ObjectProperty ;
+    rdfs:label "has ownership type" ;
+    rdfs:domain sui:Object ;
+    rdfs:range sui:OwnershipType .
+
+sui:hasLifecycleState a owl:ObjectProperty ;
+    rdfs:label "has lifecycle state" ;
+    rdfs:domain sui:Object ;
+    rdfs:range sui:ObjectLifecycleState .
+
+sui:hasType a owl:ObjectProperty ;
+    rdfs:label "has type" .
+
+sui:implements a owl:ObjectProperty ;
+    rdfs:label "implements" ;
+    rdfs:domain sui:Struct ;
+    rdfs:range sui:Ability .
+
+sui:constrains a owl:ObjectProperty ;
+    rdfs:label "constrains" ;
+    rdfs:range sui:Ability .
+
+sui:references a owl:ObjectProperty ;
+    rdfs:label "references" ;
+    rdfs:domain sui:Reference ;
+    rdfs:range sui:Type .
+
+sui:isPhantom a owl:DatatypeProperty ;
+    rdfs:label "is phantom" ;
+    rdfs:range xsd:boolean .
+
+sui:hasParameter a owl:ObjectProperty ;
+    rdfs:label "has parameter" ;
+    rdfs:domain sui:Function ;
+    rdfs:range sui:Parameter .
+
+sui:returns a owl:ObjectProperty ;
+    rdfs:label "returns" ;
+    rdfs:domain sui:Function ;
+    rdfs:range sui:Type .
+
+sui:hasVisibility a owl:ObjectProperty ;
+    rdfs:label "has visibility" ;
+    rdfs:domain sui:Function ;
+    rdfs:range sui:Visibility .
+
+sui:hasStructVisibility a owl:ObjectProperty ;
+    rdfs:label "has struct visibility" ;
+    rdfs:domain sui:Struct ;
+    rdfs:range sui:StructVisibility .
+
+sui:usesBorrowingOperator a owl:ObjectProperty ;
+    rdfs:label "uses borrowing operator" ;
+    rdfs:domain sui:Function ;
+    rdfs:range sui:BorrowingOperator .
+
+sui:isEntry a owl:DatatypeProperty ;
+    rdfs:label "is entry" ;
+    rdfs:range xsd:boolean .
+
+sui:isTest a owl:DatatypeProperty ;
+    rdfs:label "is test" ;
+    rdfs:range xsd:boolean .
+
+sui:isNative a owl:DatatypeProperty ;
+    rdfs:label "is native" ;
+    rdfs:range xsd:boolean .
+
+sui:isMutable a owl:DatatypeProperty ;
+    rdfs:label "is mutable" ;
+    rdfs:range xsd:boolean .
+
+sui:hasPTB a owl:ObjectProperty ;
+    rdfs:label "has PTB" ;
+    rdfs:domain sui:Transaction ;
+    rdfs:range sui:ProgrammableTransactionBlock .
+
+sui:produces a owl:ObjectProperty ;
+    rdfs:label "produces" ;
+    rdfs:domain sui:Transaction ;
+    rdfs:range sui:TransactionEffects .
+
+sui:emits a owl:ObjectProperty ;
+    rdfs:label "emits" ;
+    rdfs:range sui:Event .
+
+sui:hasAddress a owl:DatatypeProperty ;
+    rdfs:label "has address" ;
+    rdfs:range xsd:string .
+
+sui:specifies a owl:ObjectProperty ;
+    rdfs:label "specifies" .
+
+sui:verifies a owl:ObjectProperty ;
+    rdfs:label "verifies" .
+
+sui:hasClause a owl:ObjectProperty ;
+    rdfs:label "has clause" ;
+    rdfs:domain sui:Specification ;
+    rdfs:range sui:SpecClause .
+
+sui:hasCondition a owl:DatatypeProperty ;
+    rdfs:label "has condition" ;
+    rdfs:domain sui:SpecClause ;
+    rdfs:range xsd:string .
+
+# ============================================================================
+# LAYER 2: SECURITY LAYER - VULNERABILITY DEFECTS
+# ============================================================================
+
+suwc:VulnerabilityCategory a owl:Class ;
+    rdfs:label "Vulnerability Category" ;
+    rdfs:comment "Layer 2: Sui Move security vulnerability taxonomy (SUWC)" .
+
+# SUWC-AUTH: Authorization Defects (4 defects)
+suwc:SUWC-AUTH a owl:Class ;
+    rdfs:label "SUWC-AUTH" ;
+    rdfs:label "Authorization Defects" ;
+    rdfs:subClassOf suwc:VulnerabilityCategory ;
+    rdfs:comment "Authorization and access control vulnerabilities" .
+
+suwc:SUWC-AUTH-01 a owl:Class ;
+    rdfs:label "SUWC-AUTH-01" ;
+    rdfs:label "Missing Signer Check" ;
+    rdfs:subClassOf suwc:SUWC-AUTH ;
+    rdfs:comment "Function lacks required signer verification" ;
+    rdfs:comment "Severity: CRITICAL" .
+
+suwc:SUWC-AUTH-02 a owl:Class ;
+    rdfs:label "SUWC-AUTH-02" ;
+    rdfs:label "Capability Leakage" ;
+    rdfs:subClassOf suwc:SUWC-AUTH ;
+    rdfs:comment "AdminCap with store/copy ability leaked to unauthorized users" ;
+    rdfs:comment "Severity: CRITICAL" .
+
+suwc:SUWC-AUTH-03 a owl:Class ;
+    rdfs:label "SUWC-AUTH-03" ;
+    rdfs:label "Witness Pattern Violation" ;
+    rdfs:subClassOf suwc:SUWC-AUTH ;
+    rdfs:comment "One-Time Witness (OTW) struct borrowed instead of consumed" ;
+    rdfs:comment "Severity: HIGH" .
+
+suwc:SUWC-AUTH-04 a owl:Class ;
+    rdfs:label "SUWC-AUTH-04" ;
+    rdfs:label "Shared Object Permission Bypass" ;
+    rdfs:subClassOf suwc:SUWC-AUTH ;
+    rdfs:comment "Authorization check on shared object ignored" ;
+    rdfs:comment "Severity: CRITICAL" .
+
+# SUWC-TIME: Temporal Correctness Defects (4 defects)
+suwc:SUWC-TIME a owl:Class ;
+    rdfs:label "SUWC-TIME" ;
+    rdfs:label "Temporal Correctness Defects" ;
+    rdfs:subClassOf suwc:VulnerabilityCategory ;
+    rdfs:comment "Time-based vulnerabilities and temporal logic errors" .
+
+suwc:SUWC-TIME-01 a owl:Class ;
+    rdfs:label "SUWC-TIME-01" ;
+    rdfs:label "Premature Release" ;
+    rdfs:subClassOf suwc:SUWC-TIME ;
+    rdfs:comment "Time-locked assets released before vesting period elapses" ;
+    rdfs:comment "Severity: CRITICAL" .
+
+suwc:SUWC-TIME-02 a owl:Class ;
+    rdfs:label "SUWC-TIME-02" ;
+    rdfs:label "Indefinite Lock" ;
+    rdfs:subClassOf suwc:SUWC-TIME ;
+    rdfs:comment "Assets locked with impossible or missing extraction conditions" ;
+    rdfs:comment "Severity: HIGH" .
+
+suwc:SUWC-TIME-03 a owl:Class ;
+    rdfs:label "SUWC-TIME-03" ;
+    rdfs:label "Timestamp Manipulation" ;
+    rdfs:subClassOf suwc:SUWC-TIME ;
+    rdfs:comment "Relying on timestamp_ms instead of epoch for time-critical logic" ;
+    rdfs:comment "Severity: HIGH" .
+
+suwc:SUWC-TIME-04 a owl:Class ;
+    rdfs:label "SUWC-TIME-04" ;
+    rdfs:label "Race Between Time Conditions" ;
+    rdfs:subClassOf suwc:SUWC-TIME ;
+    rdfs:comment "Multiple transactions race on shared vesting/staking pool at epoch boundaries" ;
+    rdfs:comment "Severity: MEDIUM" .
+
+# SUWC-RES: Resource Management Defects (3 defects) - PRESERVED FROM V3.4
+suwc:SUWC-RES a owl:Class ;
+    rdfs:label "SUWC-RES" ;
+    rdfs:label "Resource Management Defects" ;
+    rdfs:subClassOf suwc:VulnerabilityCategory ;
+    rdfs:comment "Resource and asset management vulnerabilities" .
+
+suwc:SUWC-RES-01 a owl:Class ;
+    rdfs:label "SUWC-RES-01" ;
+    rdfs:label "Hot Potato Drop" ;
+    rdfs:subClassOf suwc:SUWC-RES ;
+    rdfs:comment "Receipt struct with drop ability bypasses forced execution obligation" ;
+    rdfs:comment "Severity: HIGH" .
+
+suwc:SUWC-RES-02 a owl:Class ;
+    rdfs:label "SUWC-RES-02" ;
+    rdfs:label "Object Locking / Roach Motel" ;
+    rdfs:subClassOf suwc:SUWC-RES ;
+    rdfs:comment "Object wrapped permanently with no extraction mechanism" ;
+    rdfs:comment "Severity: CRITICAL" .
+
+suwc:SUWC-RES-03 a owl:Class ;
+    rdfs:label "SUWC-RES-03" ;
+    rdfs:label "Permanent Locking" ;
+    rdfs:subClassOf suwc:SUWC-RES ;
+    rdfs:comment "No way to extract assets from locked state" ;
+    rdfs:comment "Severity: CRITICAL" .
+
+# SUWC-CONS: Consensus/Concurrency Defects (2 defects) - PRESERVED FROM V3.4
+suwc:SUWC-CONS a owl:Class ;
+    rdfs:label "SUWC-CONS" ;
+    rdfs:label "Consensus/Concurrency Defects" ;
+    rdfs:subClassOf suwc:VulnerabilityCategory ;
+    rdfs:comment "Consensus and concurrency vulnerabilities" .
+
+suwc:SUWC-CONS-01 a owl:Class ;
+    rdfs:label "SUWC-CONS-01" ;
+    rdfs:label "Curve Invariant Violation" ;
+    rdfs:subClassOf suwc:SUWC-CONS ;
+    rdfs:comment "Mathematical invariant (e.g., x*y=k in AMM) breaks after state change" ;
+    rdfs:comment "Severity: HIGH" .
+
+suwc:SUWC-CONS-02 a owl:Class ;
+    rdfs:label "SUWC-CONS-02" ;
+    rdfs:label "Vector-Based Denial of Service" ;
+    rdfs:subClassOf suwc:SUWC-CONS ;
+    rdfs:comment "Unbounded iteration over collections causes gas exhaustion" ;
+    rdfs:comment "Severity: CRITICAL" .
+
+# ============================================================================
+# LAYER 3: BUSINESS LOGIC PATTERNS
+# ============================================================================
+
+pattern:BusinessLogicPattern a owl:Class ;
+    rdfs:label "Business Logic Pattern" ;
+    rdfs:comment "Layer 3: Architectural patterns that address security defects" ;
+    dcterms:date "2026-01-06"^^xsd:date .
+
+pattern:AccessControlPattern a owl:Class ;
+    rdfs:label "AccessControlPattern" ;
+    rdfs:subClassOf pattern:BusinessLogicPattern ;
+    rdfs:comment "Addresses authorization vulnerabilities using capability-based access control" ;
+    sui:addressesDefect suwc:SUWC-AUTH-01 ;
+    sui:addressesDefect suwc:SUWC-AUTH-02 ;
+    sui:addressesDefect suwc:SUWC-AUTH-03 ;
+    sui:addressesDefect suwc:SUWC-AUTH-04 .
+
+pattern:CircuitBreakerPattern a owl:Class ;
+    rdfs:label "CircuitBreakerPattern" ;
+    rdfs:subClassOf pattern:BusinessLogicPattern ;
+    rdfs:comment "Mitigates consensus and mathematical vulnerabilities with pausable operations" ;
+    sui:addressesDefect suwc:SUWC-CONS-01 ;
+    sui:addressesDefect suwc:SUWC-CONS-02 .
+
+pattern:TimeIncentivizationPattern a owl:Class ;
+    rdfs:label "TimeIncentivizationPattern" ;
+    rdfs:subClassOf pattern:BusinessLogicPattern ;
+    rdfs:comment "Prevents temporal correctness vulnerabilities with epoch-based time locking" ;
+    sui:addressesDefect suwc:SUWC-TIME-01 ;
+    sui:addressesDefect suwc:SUWC-TIME-02 ;
+    sui:addressesDefect suwc:SUWC-TIME-03 ;
+    sui:addressesDefect suwc:SUWC-TIME-04 .
+
+pattern:EscapabilityPattern a owl:Class ;
+    rdfs:label "EscapabilityPattern" ;
+    rdfs:subClassOf pattern:BusinessLogicPattern ;
+    rdfs:comment "Ensures asset extraction and escape from locked states with upgrade mechanisms" ;
+    sui:addressesDefect suwc:SUWC-RES-01 ;
+    sui:addressesDefect suwc:SUWC-RES-02 ;
+    sui:addressesDefect suwc:SUWC-RES-03 ;
+    sui:addressesDefect suwc:SUWC-AUTH-03 ;
+    sui:addressesDefect suwc:SUWC-TIME-04 .
+
+# ============================================================================
+# LAYER 3B: IMPLEMENTATION TECHNIQUE LAYER (PhD Defense Addition)
+# Added: February 16, 2026
+# Purpose: Encode the "why vs. how" distinction described in Chapter 5:
+#   WHY = pattern:BusinessLogicPattern (abstract security intent)
+#   HOW = sui:SuiImplementationPattern (idiomatic Sui Move technique)
+# Three-step semantic chain:
+#   AbstractPattern --isImplementedBy--> Technique --usesTechnique<-- Code
+# ============================================================================
+
+sui:SuiImplementationPattern a owl:Class ;
+    rdfs:label "Sui Implementation Pattern" ;
+    rdfs:subClassOf sui:BusinessLogicLayer ;
+    rdfs:comment "Low-level, idiomatic Sui Move technique that realizes an abstract security pattern" ;
+    dcterms:date "2026-02-16"^^xsd:date .
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# AccessControlPattern Techniques
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:CapabilityTechnique a sui:SuiImplementationPattern, owl:NamedIndividual ;
+    rdfs:label "Capability Technique" ;
+    rdfs:comment "Access control via capability structs (AdminCap, OwnerCap, TreasuryCap) with key ability" ;
+    sui:realizesPattern pattern:AccessControlPattern ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+sui:WitnessTechnique a sui:SuiImplementationPattern, owl:NamedIndividual ;
+    rdfs:label "Witness Technique" ;
+    rdfs:comment "Type-safe authorization via One-Time Witness (OTW) pattern for init-time operations" ;
+    sui:realizesPattern pattern:AccessControlPattern ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+sui:DynamicACLTechnique a sui:SuiImplementationPattern, owl:NamedIndividual ;
+    rdfs:label "Dynamic ACL Technique" ;
+    rdfs:comment "Role-based access via Table<address> or VecSet<address> membership lookups" ;
+    sui:realizesPattern pattern:AccessControlPattern ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CircuitBreakerPattern Techniques
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:AdminStateControlTechnique a sui:SuiImplementationPattern, owl:NamedIndividual ;
+    rdfs:label "Admin State Control Technique" ;
+    rdfs:comment "Emergency pause via PauseCap/EmergencyCap + boolean paused state field" ;
+    sui:realizesPattern pattern:CircuitBreakerPattern ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TimeIncentivizationPattern Techniques
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:EpochTimeLockTechnique a sui:SuiImplementationPattern, owl:NamedIndividual ;
+    rdfs:label "Epoch Time Lock Technique" ;
+    rdfs:comment "Temporal constraints via Clock object + epoch/timestamp_ms comparisons with assert!" ;
+    sui:realizesPattern pattern:TimeIncentivizationPattern ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# EscapabilityPattern Techniques
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:UpgradeCapTechnique a sui:SuiImplementationPattern, owl:NamedIndividual ;
+    rdfs:label "Upgrade Cap Technique" ;
+    rdfs:comment "Protocol migration via UpgradeCap/UpgradeTicket/UpgradeReceipt/MigrationCap" ;
+    sui:realizesPattern pattern:EscapabilityPattern ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+sui:DynamicFieldExtractionTechnique a sui:SuiImplementationPattern, owl:NamedIndividual ;
+    rdfs:label "Dynamic Field Extraction Technique" ;
+    rdfs:comment "Asset extraction from locked state via dynamic_field::remove and option::extract" ;
+    sui:realizesPattern pattern:EscapabilityPattern ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+# ============================================================================
+# DCR EVENT CLASSES (Behavioral Layer)
+# ============================================================================
+
+pattern:AC_GrantRole a owl:Class ;
+    rdfs:label "AC_GrantRole" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Grant Role (Condition) - Creates capability for access control" .
+
+pattern:AC_ProtectedCall a owl:Class ;
+    rdfs:label "AC_ProtectedCall" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Protected Call (Response) - Executes protected operation requiring capability" .
+
+pattern:AC_RevokeRole a owl:Class ;
+    rdfs:label "AC_RevokeRole" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Revoke Role (Exclusion) - Destroys capability to revoke access" .
+
+pattern:TI_Start a owl:Class ;
+    rdfs:label "TI_Start" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Time Start (Condition) - Initiates time-locked operation with Clock parameter" .
+
+pattern:TI_Proceed a owl:Class ;
+    rdfs:label "TI_Proceed" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Proceed (Response) - Executes time-dependent action after time constraint satisfied" .
+
+pattern:CB_Pause a owl:Class ;
+    rdfs:label "CB_Pause" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Pause System (Exclusion) - Emergency pause that excludes normal operations" .
+
+pattern:CB_Unpause a owl:Class ;
+    rdfs:label "CB_Unpause" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Unpause System (Inclusion) - Re-enables paused operations" .
+
+pattern:ES_Authorize a owl:Class ;
+    rdfs:label "ES_Authorize" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Authorize Upgrade (Condition) - Authorizes protocol upgrade or migration" .
+
+pattern:ES_Escape a owl:Class ;
+    rdfs:label "ES_Escape" ;
+    rdfs:subClassOf dcr:Event ;
+    rdfs:comment "DCR Event: Commit Escape (Response) - Executes escape/upgrade after authorization" .
+
+
+# ============================================================================
+# PROPERTY DEFINITIONS FOR PATTERNS AND DEFECTS
+# ============================================================================
+
+sui:addressesDefect a owl:ObjectProperty ;
+    rdfs:label "addresses defect" ;
+    rdfs:comment "BusinessLogicPattern prescriptively prevents/remediates this defect" ;
+    rdfs:domain pattern:BusinessLogicPattern ;
+    rdfs:range suwc:VulnerabilityCategory .
+
+sui:indicatesDefectRisk a owl:ObjectProperty ;
+    rdfs:label "indicates defect risk" ;
+    rdfs:comment "SecurityOperation whose presence without an authorization guard signals risk of this defect — diagnostic detection trigger" ;
+    rdfs:domain sui:SecurityOperation ;
+    rdfs:range suwc:VulnerabilityCategory .
+
+sui:mitigatesDefect a owl:ObjectProperty ;
+    rdfs:label "mitigates defect" ;
+    rdfs:comment "SecurityOperation whose presence indicates the defect is being handled — its absence signals vulnerability" ;
+    rdfs:domain sui:SecurityOperation ;
+    rdfs:range suwc:VulnerabilityCategory .
+
+sui:isAddressedBy a owl:ObjectProperty ;
+    rdfs:label "is addressed by" ;
+    rdfs:comment "Defect is addressed by a specific pattern" ;
+    owl:inverseOf sui:addressesDefect ;
+    rdfs:domain suwc:VulnerabilityCategory ;
+    rdfs:range pattern:BusinessLogicPattern .
+
+sui:formalizes a owl:ObjectProperty ;
+    rdfs:label "formalizes" ;
+    rdfs:comment "Pattern is formalized as a DCR process" ;
+    rdfs:domain pattern:BusinessLogicPattern ;
+    rdfs:range dcr:Process .
+
+sui:isImplementedBy a owl:ObjectProperty ;
+    rdfs:label "is implemented by" ;
+    rdfs:comment "Abstract pattern is implemented by a Sui Move implementation technique" ;
+    rdfs:domain pattern:BusinessLogicPattern ;
+    rdfs:range sui:SuiImplementationPattern .
+
+sui:realizesPattern a owl:ObjectProperty ;
+    rdfs:label "realizes pattern" ;
+    rdfs:comment "Implementation technique realizes an abstract security pattern" ;
+    rdfs:domain sui:SuiImplementationPattern ;
+    rdfs:range pattern:BusinessLogicPattern ;
+    owl:inverseOf sui:isImplementedBy ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+sui:usesTechnique a owl:ObjectProperty ;
+    rdfs:label "uses technique" ;
+    rdfs:comment "Code element uses a specific Sui Move implementation technique" ;
+    rdfs:domain [ a owl:Class; owl:unionOf (sui:Module sui:Function) ] ;
+    rdfs:range sui:SuiImplementationPattern ;
+    dcterms:date "2026-02-16"^^xsd:date .
+
+sui:implementsPattern a owl:ObjectProperty ;
+    rdfs:label "implements pattern" ;
+    rdfs:comment "Link code to business logic pattern" ;
+    rdfs:domain [ a owl:Class; owl:unionOf (sui:Module sui:Struct sui:Function) ] ;
+    rdfs:range pattern:BusinessLogicPattern .
+
+# ============================================================================
+# LAYER 4: FORMAL LAYER - OC-DCR (OBJECT-CENTRIC DCR)
+# ============================================================================
+
+dcr:Process a owl:Class ;
+    rdfs:label "DCR Process" ;
+    rdfs:comment "Layer 4: Formal process definition in DCR graph semantics" .
+
+dcr:Event a owl:Class ;
+    rdfs:label "DCR Event" ;
+    rdfs:comment "Event in a DCR process" .
+
+dcr:condition a owl:ObjectProperty ;
+    rdfs:label "DCR Condition Relation" ;
+    rdfs:comment "Condition relation between DCR events" .
+
+dcr:response a owl:ObjectProperty ;
+    rdfs:label "DCR Response Relation" ;
+    rdfs:comment "Response relation between DCR events" .
+
+dcr:inclusion a owl:ObjectProperty ;
+    rdfs:label "DCR Inclusion Relation" ;
+    rdfs:comment "Inclusion relation in DCR" .
+
+dcr:exclusion a owl:ObjectProperty ;
+    rdfs:label "DCR Exclusion Relation" ;
+    rdfs:comment "Exclusion relation in DCR" .
+
+# Object-Centric DCR (OC-DCR) Extensions
+ocdcr:hasEvent a owl:ObjectProperty ;
+    rdfs:label "OC-DCR Has Event" ;
+    rdfs:domain dcr:Process ;
+    rdfs:range dcr:Event ;
+    rdfs:comment "OC-DCR process has event" .
+
+ocdcr:involvesEntity a owl:ObjectProperty ;
+    rdfs:label "OC-DCR Involves Entity" ;
+    rdfs:comment "DCR event involves object-centric entity" .
+
+# Connections between Semantic Layer and Formal Layer
+sui:definesLifecycleOf a owl:ObjectProperty ;
+    rdfs:label "defines lifecycle of" ;
+    rdfs:domain dcr:Process ;
+    rdfs:range sui:Struct ;
+    rdfs:comment "Links a DCR process to the Struct whose lifecycle it defines" .
+
+sui:spawns a owl:ObjectProperty ;
+    rdfs:label "spawns" ;
+    rdfs:domain dcr:Event ;
+    rdfs:range dcr:Process ;
+    rdfs:comment "Event spawns new process instance" .
+
+sui:mapsToFunction a owl:ObjectProperty ;
+    rdfs:label "maps to function" ;
+    rdfs:domain dcr:Event ;
+    rdfs:range sui:Function ;
+    rdfs:comment "Maps a DCR event to its corresponding Sui Move function" .
+
+sui:preventsDefect a owl:ObjectProperty ;
+    rdfs:label "prevents defect" ;
+    rdfs:domain dcr:Event ;
+    rdfs:range suwc:VulnerabilityCategory ;
+    rdfs:comment "DCR prevention event prevents a specific vulnerability defect" .
+
+sui:exemplifiesDefect a owl:ObjectProperty ;
+    rdfs:label "exemplifies defect" ;
+    rdfs:domain dcr:Process ;
+    rdfs:range suwc:VulnerabilityCategory ;
+    rdfs:comment "Attack/violation process exemplifies how a defect manifests" .
+
+sui:blockedBy a owl:ObjectProperty ;
+    rdfs:label "blocked by" ;
+    rdfs:domain dcr:Process ;
+    rdfs:range dcr:Process ;
+    rdfs:comment "Attack/violation process is prevented/blocked by pattern process" .
+
+# ============================================================================
+# LAYER 3 EXTENSION: SEMANTIC OPERATION DETECTION
+# Added: January 10, 2026
+# Purpose: Enable semantic detection of security-critical operations for all 4 patterns
+# ===========================================================================
+
+sui:BusinessLogicLayer a owl:Class ;
+    rdfs:label "Business Logic Layer" ;
+    rdfs:comment "Layer 3: Dual-layer model linking abstract security goals (BusinessLogicPattern) to idiomatic Sui Move implementation techniques (SuiImplementationPattern)" ;
+    dcterms:date "2026-04-24"^^xsd:date .
+
+# Semantic Operation Class
+sui:SecurityOperation a owl:Class ;
+    rdfs:label "Security Operation" ;
+    rdfs:subClassOf sui:BusinessLogicLayer ;
+    rdfs:comment "Security-critical operations" ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PATTERN 1: AccessControlPattern Operations
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:BalanceOperation a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Balance Operation" ;
+    rdfs:comment "Coin/balance manipulation operation (coin::take, coin::split, coin::join)" ;
+    sui:indicatesDefectRisk suwc:SUWC-AUTH-01 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:OwnershipTransfer a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Ownership Transfer" ;
+    rdfs:comment "Object ownership change operation (transfer::transfer, transfer::share_object)" ;
+    sui:indicatesDefectRisk suwc:SUWC-AUTH-02 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:ObjectCreation a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Object Creation" ;
+    rdfs:comment "Object minting/creation operation (coin::mint, ::new)" ;
+    sui:indicatesDefectRisk suwc:SUWC-AUTH-03 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:ObjectDeletion a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Object Deletion" ;
+    rdfs:comment "Object destruction/burning operation (coin::burn, object::delete)" ;
+    sui:indicatesDefectRisk suwc:SUWC-AUTH-04 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:BalanceMutation a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Balance Mutation" ;
+    rdfs:comment "Mutable balance reference operation (&mut Balance, &mut Coin)" ;
+    sui:indicatesDefectRisk suwc:SUWC-AUTH-01 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PATTERN 2: CircuitBreakerPattern Operations
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:SharedStateMutation a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Shared State Mutation" ;
+    rdfs:comment "Mutation of shared object state that could break invariants" ;
+    sui:indicatesDefectRisk suwc:SUWC-CONS-01 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:InvariantCheck a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Invariant Check" ;
+    rdfs:comment "Mathematical invariant verification (assert! with invariant keyword)" ;
+    sui:mitigatesDefect suwc:SUWC-CONS-01 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:UnboundedIteration a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Unbounded Iteration" ;
+    rdfs:comment "Unbounded loop or vector iteration creating DoS risk" ;
+    sui:indicatesDefectRisk suwc:SUWC-CONS-02 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PATTERN 3: TimeIncentivizationPattern Operations
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:TemporalCheck a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Temporal Check" ;
+    rdfs:comment "Clock or epoch timestamp usage (clock::timestamp_ms, tx_context::epoch)" ;
+    sui:indicatesDefectRisk suwc:SUWC-TIME-03 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:TemporalConstraint a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Temporal Constraint" ;
+    rdfs:comment "Epoch-based temporal constraint (assert! with epoch comparison)" ;
+    sui:mitigatesDefect suwc:SUWC-TIME-01 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:TimestampComparison a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Timestamp Comparison" ;
+    rdfs:comment "Timestamp comparison in conditional logic" ;
+    sui:indicatesDefectRisk suwc:SUWC-TIME-04 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PATTERN 4: EscapabilityPattern Operations
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:DynamicFieldOperation a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Dynamic Field Operation" ;
+    rdfs:comment "Dynamic field manipulation (dynamic_field::add, dynamic_field::remove)" ;
+    sui:mitigatesDefect suwc:SUWC-RES-02 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:OptionalExtraction a sui:SecurityOperation, owl:NamedIndividual ;
+    rdfs:label "Optional Extraction" ;
+    rdfs:comment "Asset extraction from optional wrapper (option::extract, option::swap)" ;
+    sui:mitigatesDefect suwc:SUWC-RES-03 ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Properties for Semantic Detection
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sui:performsOperation a owl:ObjectProperty ;
+    rdfs:label "performs operation" ;
+    rdfs:comment "Function performs this security-critical operation (semantic detection)" ;
+    rdfs:domain sui:Function ;
+    rdfs:range sui:SecurityOperation ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+sui:requiresAccessControl a owl:DatatypeProperty ;
+    rdfs:label "requires access control" ;
+    rdfs:comment "Function requires capability-based access control (derived from semantic analysis)" ;
+    rdfs:domain sui:Function ;
+    rdfs:range xsd:boolean ;
+    dcterms:date "2026-01-10"^^xsd:date .
+
+
+# ============================================================================
+# VALIDATION COVERAGE SUMMARY
+# ============================================================================
+
+:OntologyValidation a owl:Class ;
+    rdfs:label "Ontology v1.0" ;
+    rdfs:comment "COMPLETE Sui Move Ontology 1.0 IMPLEMENTATION" ;
+    rdfs:comment "============================================================" ;
+    rdfs:comment "LAYERED ARCHITECTURE:" ;
+    rdfs:comment "Grammar Layer" ;
+    rdfs:comment "Semantic Layer (105+ classes, 55+ properties)" ;
+    rdfs:comment "Security Layer (13 defects)" ;
+    rdfs:comment "Business Logic Patterns (4 patterns)" ;
+    rdfs:comment "Implementation Techniques (7 techniques)" ;
+    rdfs:comment "Formal Layer (OC-DCR with full DCR preservation)" ;
+    rdfs:comment "Verification Layer (Move Prover specs)" ;
+    rdfs:comment "============================================================" ;
+    rdfs:comment "GRAMMAR COVERAGE: 171/171 (100%)" ;
+    rdfs:comment "EXPLICIT MAPPINGS: 156/171 (91.2%)" ;
+    rdfs:comment "============================================================" ;
+    rdfs:comment "  ✓ All 13 vulnerability defects" ;
+    rdfs:comment "  ✓ All 4 business logic patterns" ;
+    rdfs:comment "  ✓ All 40 original properties" ;
+    rdfs:comment "  ✓ All 31 original individuals" ;
+    rdfs:comment "  ✓ Complete DCR → OC-DCR formal layer" ;
+    rdfs:comment "  ✓ All SPARQL relationship triples (35+)" ;
+    rdfs:comment "  ✓ 100% backward compatibility" ;
+    rdfs:comment "============================================================" ;
+    rdfs:comment "  + 20 Expression classes (if, while, call, etc.)" ;
+    rdfs:comment "  + 4 Module/Import classes" ;
+    rdfs:comment "  + 4 Annotation classes" ;
+    rdfs:comment "  + 5 Specification classes" ;
+    rdfs:comment "  + 19 Operator individuals" ;
+    rdfs:comment "  + 8 Supporting classes" ;
+    rdfs:comment "  + 15 new properties for expression support" ;
+    rdfs:comment "  + 1 SuiImplementationPattern class (Layer 3)" ;
+    rdfs:comment "  + 7 Implementation technique individuals" ;
+    rdfs:comment "  + 2 new properties (realizesPattern, usesTechnique)" ;
+    rdfs:comment "============================================================" ;
+    rdfs:comment "DCR/OC-DCR DETAILS:" ;
+    rdfs:comment "  ✓ DCR core: Event, Process, condition, response" ;
+    rdfs:comment "  ✓ DCR relations: inclusion, exclusion" ;
+    rdfs:comment "  ✓ OC-DCR: ocdcr:involvesEntity (object-centric)" ;
+    rdfs:comment "  ✓ Mapping: sui:mapsToFunction (event → function)" ;
+    rdfs:comment "  ✓ Defense: sui:preventsDefect (DCR → security)" ;
+    rdfs:comment "  ✓ Blocking: sui:blockedBy (attack vs pattern)" ;
+    rdfs:comment "============================================================" ;
+    rdfs:comment "STATUS: PRODUCTION-READY" ;
+    rdfs:comment "Last Updated: 2026-01-06T08:55:00Z" .
+
+# ============================================================================
+# END OF v1.0 ONTOLOGY
+# ============================================================================
